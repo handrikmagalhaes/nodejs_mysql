@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="pt-BR">
+
+    <link rel="stylesheet" href="/css/acessibilidade.css">
+    <link rel="stylesheet" href="/css/servicos.css">
+    <link rel="stylesheet" href="/css/toastr.min.css">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Icones -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+    <!-- jQuery CDN - Slim version (= Sem AJAX) -->
+    <script src="/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <!-- Popper.JS -->
+    <script src="/js/popper.min.js" crossorigin="anonymous"></script>
+    <!-- Checa Contraste -->
+    <script src="/js/checa-contraste.js" crossorigin="anonymous"></script>
+    <!-- Toastr -->
+     <script src="/js/toastr.min.js" crossorigin="anonymous"></script>
+
+    <title>IFAL - Sistema de Editais | Instituto Federal de Alagoas</title>
+
+</head>
+<body class="p-0 m-0">
+
+<!-- NAV BAR TOPO -->
+<header>
+</header>
+<!-- FIM NAV BAR TOPO -->
+
+<!-- HEAD TÍTULO DO SISTEMA -->
+<div id="div-background" class="container-fluid fade-in-1 pl-0 pr-0">
+    <div class="container h-100 bg-ondas-verdes">
+        <div class="row h-100">
+            <div id="titulo-sistema" class="col-12 d-flex justify-content-center justify-content-lg-start align-items-center">
+                CADASTRO DE TITULARES
+            </div>
+        </div>
+    </div>
+</div>
+<!-- FIM HEAD -->
+
+<!-- CONTEUDO -->
+<div class="container fade-in-1">
+    <div class="row">
+        <div id="menu-lateral" class="pl-0 pr-lg-2 mt-2">
+            <nav id="nav-menu-lateral" aria-label="Menu lateral para filtrar editais por categorias">
+                <ul id="menu-opcoes" class="list-unstyled components">
+                    <li>
+                        <a href="#" class="rounded ativo"><i class="bi-sort-down mr-2"></i>Cadastros</a>
+                    </li>
+                    <li>
+                        <a href="/titulares" class="rounded"><i class="bi-dot mr-2"></i>Titulares</a>
+                    </li>
+                    <li>
+                        <a href="#" class="rounded"><i class="bi-dot mr-2"></i>Dependentes</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div id="conteudo" class="col-12 col-lg-8 col-xl-9 mt-2">
+            <main>
+                <div class="row">
+                    <div class="col-2">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalForm">Inserir Titular</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <table class="table table striped" id="tblDados">
+                        <thead>
+                            <th>Matricula</th>
+                            <th>Nome</th>
+                            <th>Data de Nascimento</th>
+                            <th>CPF</th>
+                        </thead>
+                        <tbody id="corpoTabela">
+
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+<!-- FIM CONTEUDO -->
+
+<!-- RODAPÉ SISTEMA -->
+<footer>
+    
+</footer>
+<!-- FIM RODAPÉ -->
+
+<!-- MODAIS -->
+<!-- Form Modal -->
+<!-- Modal -->
+<div class="modal fade" id="modalForm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Dados do Titular</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formDados" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="matricula" class="form-label">Matricula</label>
+                        <input type="text" class="form-control" id="matricula" name="matricula" aria-describedby="Matricula">
+                    </div>
+                    <div class="mb-3">
+                        <label for="nomeTitular" class="form-label">Nome do Titular</label>
+                        <input type="text" class="form-control" id="nomeTitular" name="nomeTitular" aria-describedby="NomeTitular">
+                    </div>
+                    <div class="mb-3">
+                        <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+                        <input type="date" class="form-control" id="dataNascimento" name="dataNascimento">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cpf" class="form-label">CPF</label>
+                        <input type="text" class="form-control" id="cpf" aria-describedby="cpf" name="cpf">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-success" id="btnInserir">Inserir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    
+<!-- Contraste -->
+<script src="/js/contraste.js" crossorigin="anonymous"></script>
+<script>
+    fetch("/titulares/lista")
+    .then(res=>res.json())
+    .then(dados=>{
+        var linha = "";
+        console.log(dados);
+        for (i=0; i < dados.titulares.length; i++){
+            linha += "<tr>";
+            linha += "<td>"+dados.titulares[i].matricula+"</td>";
+            linha += "<td>"+dados.titulares[i].nome+"</td>";
+            linha += "<td>"+dados.titulares[i].data_nascimento+"</td>";
+            linha += "<td>"+dados.titulares[i].cpf+"</td>";
+            linha += "</tr>"
+        }
+        document.getElementById("corpoTabela").innerHTML = linha;
+    })
+
+    $("#btnInserir").click(function(){
+        $.post('/titulares/inserir', $("#formDados").serialize(), function(data){
+            if (data){
+                toastr["success"]("Titular cadastrado", "Sistema de Cadastro");
+            } else {
+                toastr["error"]("Titular não cadastrado", "Sistema de Cadastro");    
+            }
+
+        });
+    });
+</script>
+
+</body>
+</html>
