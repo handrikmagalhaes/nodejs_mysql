@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="pt-BR">
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/acessibilidade.css">
+    <link rel="stylesheet" href="css/servicos.css">
+    <link rel="stylesheet" href="css/toastr.min.css">
+    <!-- Icones -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+    <!-- jQuery CDN - Slim version (= Sem AJAX) -->
+    <script src="/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <!-- Popper.JS -->
+    <script src="/js/popper.min.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <!-- Checa Contraste -->
+    <script src="/js/checa-contraste.js" crossorigin="anonymous"></script>
+    <!-- Toastr -->
+     <script src="/js/toastr.min.js" crossorigin="anonymous"></script>
+
+    <title>IFAL - Sistema de Editais | Instituto Federal de Alagoas</title>
+
+</head>
+<body class="p-0 m-0">
+
+<!-- NAV BAR TOPO -->
+<header>
+</header>
+<!-- FIM NAV BAR TOPO -->
+
+<!-- HEAD TÍTULO DO SISTEMA -->
+<div id="div-background" class="container-fluid fade-in-1 pl-0 pr-0">
+    <div class="container h-100 bg-ondas-verdes">
+        <div class="row h-100">
+            <div id="titulo-sistema" class="col-12 d-flex justify-content-center justify-content-lg-start align-items-center">
+                CADASTRO DE TITULARES
+            </div>
+        </div>
+    </div>
+</div>
+<!-- FIM HEAD -->
+
+<!-- CONTEUDO -->
+<div class="container fade-in-1">
+    <div class="row">
+        <div id="menu-lateral" class="pl-0 pr-lg-2 mt-2">
+            <nav id="nav-menu-lateral" aria-label="Menu lateral para filtrar editais por categorias">
+                <ul id="menu-opcoes" class="list-unstyled components">
+                    <li>
+                        <a href="#" class="rounded ativo"><i class="bi-sort-down mr-2"></i>Cadastros</a>
+                    </li>
+                    <li>
+                        <a href="/titulares.html" class="rounded"><i class="bi-dot mr-2"></i>Titulares</a>
+                    </li>
+                    <li>
+                        <a href="#" class="rounded"><i class="bi-dot mr-2"></i>Dependentes</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div id="conteudo" class="col-12 col-lg-8 col-xl-9 mt-2">
+            <main>
+                <div class="row">
+                    <div class="col-2">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalForm">Inserir Titular</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <table class="table table striped" id="tblDados">
+                        <thead>
+                            <th>Matricula</th>
+                            <th>Nome</th>
+                            <th>Data de Nascimento</th>
+                            <th>CPF</th>
+                            <th>Ações</th>
+                        </thead>
+                        <tbody id="corpoTabela">
+
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+<!-- FIM CONTEUDO -->
+
+<!-- RODAPÉ SISTEMA -->
+<footer>
+    
+</footer>
+<!-- FIM RODAPÉ -->
+
+<!-- MODAIS -->
+<!-- Form Modal -->
+<!-- Modal -->
+<div class="modal fade" id="modalForm" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title" id="staticBackdropLabel">Dados do Titular</h1>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formDados" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="matricula" class="form-label">Matricula</label>
+                        <input type="text" class="form-control" id="matricula" name="matricula" aria-describedby="Matricula">
+                    </div>
+                    <div class="mb-3">
+                        <label for="nomeTitular" class="form-label">Nome do Titular</label>
+                        <input type="text" class="form-control" id="nomeTitular" name="nomeTitular" aria-describedby="NomeTitular">
+                    </div>
+                    <div class="mb-3">
+                        <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+                        <input type="date" class="form-control" id="dataNascimento" name="dataNascimento">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cpf" class="form-label">CPF</label>
+                        <input type="text" class="form-control" id="cpf" aria-describedby="cpf" name="cpf">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-success" id="btnInserir">Inserir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    
+<!-- Contraste -->
+<script src="/js/contraste.js" crossorigin="anonymous"></script>
+<script>
+    // Alimenta a tabela
+    criaTabela();
+
+    // Envia o form
+    const form = document.getElementById("formDados");
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const data = new URLSearchParams(formData);
+        const element = document.getElementById("btnInserir");
+        if (element.innerText == "Inserir"){
+            fetch('/titulares/inserir/', {
+                method: 'POST',
+                body: data,
+            })
+            .then(res => {
+                if (res.ok){
+                    criaTabela();
+                    toastr['success']('Titular Inserido com Sucesso');
+                    form.reset();
+                    $("#modalForm").modal('toggle');
+                    
+
+                }
+            })
+            .catch(err => toast["error"](err))
+        }
+        if (element.innerText == "Alterar"){
+            fetch('/titulares/alterar/'+document.getElementById("matricula").value+'/', {
+                method: 'PUT',
+                body: data,
+            })
+            .then(res => {
+                if (res.ok){
+                    toastr['success']('Titular Alterado com Sucesso', 'Sistema de Cadastro');
+                    form.reset;
+                    $("#modalForm").modal('toggle');
+                    criaTabela();
+                }
+            })
+            .catch(err => toastr["error"](err))
+        }
+
+    })
+    function criaTabela(){
+        fetch("/titulares/lista")
+        .then(res=>res.json())
+        .then(dados=>{
+            console.log(dados);
+            if (dados.titulares.length > 0){
+                var linha = "";
+                for (i=0; i < dados.titulares.length; i++){
+                    linha += "<tr>";
+                    linha += "<td>"+dados.titulares[i].matricula+"</td>";
+                    linha += "<td>"+dados.titulares[i].nome_titular+"</td>";
+                    linha += "<td>"+dados.titulares[i].data_nascimento+"</td>";
+                    linha += "<td>"+dados.titulares[i].cpf+"</td>";
+                    linha += "<td><i class='bi bi-pencil-fill' onclick='editaTitular("+dados.titulares[i].matricula+")' data-toggle='modal' data-target='#modalForm'></i><i class='bi bi-trash-fill ml-2' onclick='excluiTitular("+dados.titulares[i].matricula+")'></i>"
+                    linha += "</tr>"
+                }
+                document.getElementById("corpoTabela").innerHTML = linha;
+            } else {
+                toastr["error"]("Não há dados a mostrar", "Sistema de Cadastro");
+            }
+        })
+        .catch(err=>toastr['error'](err))
+    }
+
+    function editaTitular(matricula){
+        const vMatricula = matricula
+        // Tratar o form
+        element = document.getElementById("btnInserir");
+        element.innerText = "Alterar";
+        document.getElementById("matricula").disabled = true;
+
+        //Preenche o form
+        fetch('/titulares/consulta/'+vMatricula+'/')
+        .then(res=>res.json())
+        .then(dados=>{
+            const matricula = dados.titular[0].matricula
+            const nome = dados.titular[0].nome_titular
+            const data_nascimento = dados.titular[0].data_nascimento
+            const cpf = dados.titular[0].cpf
+            document.getElementById("matricula").value = matricula
+            document.getElementById("nomeTitular").value = nome
+            document.getElementById("dataNascimento").value = data_nascimento
+            document.getElementById("cpf").value = cpf
+
+        })
+        
+    }
+    
+    function excluiTitular(matricula){
+        var r = confirm('Deseja excluir o titular?');
+        if (r == true){
+            fetch(`/titulares/excluir/`+matricula+`/`, {
+                method: 'DELETE',
+            })
+            .then(res=> {
+                if (res.ok){
+                    toastr['success']('Titular excluído com sucesso');
+                    criaTabela();
+                } else {
+                    toastr['error']('Titular não excluído')
+                }
+            })
+            .catch(err => toastr['error'](err))
+        }
+    }
+</script>
+
+</body>
+</html>
