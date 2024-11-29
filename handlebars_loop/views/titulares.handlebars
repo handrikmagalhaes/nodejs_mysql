@@ -16,11 +16,11 @@
         <tbody id="corpoTabela">
             {{#each titulares}}
             <tr>
-                <td>{{this.matricula}}</td>
-                <td>{{this.nome_titular}}</td>
-                <td>{{this.data_nascimento}}</td>
-                <td>{{this.cpf}}</td>
-                <td><i class="bi bi-pencil-fill" onclick="editaTitular({{this.matricula}})" data-toggle='modal' data-target='#modalForm'></i><i class='bi bi-trash-fill ml-2' onclick="excluiTitular({{this.matricula}})"></i></td>
+                <td>{{matricula}}</td>
+                <td>{{nome_titular}}</td>
+                <td>{{data_nascimento}}</td>
+                <td>{{cpf}}</td>
+                <td><i class="bi bi-pencil-fill" onclick="editaTitular({{matricula}})" data-toggle='modal' data-target='#modalForm'></i><i class='bi bi-trash-fill ml-2' onclick="excluiTitular({{matricula}})"></i></td>
             </tr>
             {{/each}}
         </tbody>
@@ -124,7 +124,7 @@
         fetch("/titulares/lista")
         .then(res=>res.json())
         .then(dados=>{
-            console.log(dados);
+            //console.log(dados);
             if (dados.titulares.length > 0){
                 var linha = "";
                 for (i=0; i < dados.titulares.length; i++){
