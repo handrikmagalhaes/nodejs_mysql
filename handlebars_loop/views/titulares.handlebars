@@ -1,0 +1,188 @@
+
+<div class="row">
+    <div class="col-2">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalForm">Inserir Titular</button>
+    </div>
+</div>
+<div class="row">
+    <table class="table table striped" id="tblDados">
+        <thead>
+            <th>Matricula</th>
+            <th>Nome</th>
+            <th>Data de Nascimento</th>
+            <th>CPF</th>
+            <th>Ações</th>
+        </thead>
+        <tbody id="corpoTabela">
+            {{#each titulares}}
+            <tr>
+                <td>{{this.matricula}}</td>
+                <td>{{this.nome_titular}}</td>
+                <td>{{this.data_nascimento}}</td>
+                <td>{{this.cpf}}</td>
+                <td><i class="bi bi-pencil-fill" onclick="editaTitular({{this.matricula}})" data-toggle='modal' data-target='#modalForm'></i><i class='bi bi-trash-fill ml-2' onclick="excluiTitular({{this.matricula}})"></i></td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<!-- MODAIS -->
+<!-- Form Modal -->
+<!-- Modal -->
+<div class="modal fade" id="modalForm" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title" id="staticBackdropLabel">Dados do Titular</h1>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formDados" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="matricula" class="form-label">Matricula</label>
+                        <input type="text" class="form-control" id="matricula" name="matricula" aria-describedby="Matricula">
+                    </div>
+                    <div class="mb-3">
+                        <label for="nomeTitular" class="form-label">Nome do Titular</label>
+                        <input type="text" class="form-control" id="nomeTitular" name="nomeTitular" aria-describedby="NomeTitular">
+                    </div>
+                    <div class="mb-3">
+                        <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+                        <input type="date" class="form-control" id="dataNascimento" name="dataNascimento">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cpf" class="form-label">CPF</label>
+                        <input type="text" class="form-control" id="cpf" aria-describedby="cpf" name="cpf">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-success" id="btnInserir">Inserir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    
+<!-- Contraste -->
+<script src="/js/contraste.js" crossorigin="anonymous"></script>
+<script>
+    window.onload = function(){
+        let msg = '{{msg}}'
+        console.log(msg.length)
+        if (msg.length > 0){
+            toastr["error"](msg);
+        }
+
+        // Alimenta a tabela
+        //criaTabela();
+    }
+
+    // Envia o form
+    const form = document.getElementById("formDados");
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const data = new URLSearchParams(formData);
+        const element = document.getElementById("btnInserir");
+        if (element.innerText == "Inserir"){
+            fetch('/titulares/inserir/', {
+                method: 'POST',
+                body: data,
+            })
+            .then(res => {
+                if (res.ok){
+                    criaTabela();
+                    toastr['success']('Titular Inserido com Sucesso');
+                    form.reset();
+                    $("#modalForm").modal('toggle');
+                    
+
+                }
+            })
+            .catch(err => toast["error"](err))
+        }
+        if (element.innerText == "Alterar"){
+            fetch('/titulares/alterar/'+document.getElementById("matricula").value+'/', {
+                method: 'PUT',
+                body: data,
+            })
+            .then(res => {
+                if (res.ok){
+                    toastr['success']('Titular Alterado com Sucesso', 'Sistema de Cadastro');
+                    form.reset;
+                    $("#modalForm").modal('toggle');
+                    criaTabela();
+                }
+            })
+            .catch(err => toastr["error"](err))
+        }
+
+    })
+    function criaTabela(){
+        fetch("/titulares/lista")
+        .then(res=>res.json())
+        .then(dados=>{
+            console.log(dados);
+            if (dados.titulares.length > 0){
+                var linha = "";
+                for (i=0; i < dados.titulares.length; i++){
+                    linha += "<tr>";
+                    linha += "<td>"+dados.titulares[i].matricula+"</td>";
+                    linha += "<td>"+dados.titulares[i].nome_titular+"</td>";
+                    linha += "<td>"+dados.titulares[i].data_nascimento+"</td>";
+                    linha += "<td>"+dados.titulares[i].cpf+"</td>";
+                    linha += "<td><i class='bi bi-pencil-fill' onclick='editaTitular("+dados.titulares[i].matricula+")' data-toggle='modal' data-target='#modalForm'></i><i class='bi bi-trash-fill ml-2' onclick='excluiTitular("+dados.titulares[i].matricula+")'></i></td>"
+                    linha += "</tr>"
+                }
+                document.getElementById("corpoTabela").innerHTML = linha;
+            } else {
+                toastr["error"]("Não há dados a mostrar", "Sistema de Cadastro");
+            }
+        })
+        .catch(err=>toastr['error'](err))
+    }
+
+    function editaTitular(matricula){
+        const vMatricula = matricula
+        // Tratar o form
+        element = document.getElementById("btnInserir");
+        element.innerText = "Alterar";
+        document.getElementById("matricula").disabled = true;
+
+        //Preenche o form
+        fetch('/titulares/consulta/'+vMatricula+'/')
+        .then(res=>res.json())
+        .then(dados=>{
+            const matricula = dados.titular[0].matricula
+            const nome = dados.titular[0].nome_titular
+            const data_nascimento = dados.titular[0].data_nascimento
+            const cpf = dados.titular[0].cpf
+            document.getElementById("matricula").value = matricula
+            document.getElementById("nomeTitular").value = nome
+            document.getElementById("dataNascimento").value = data_nascimento
+            document.getElementById("cpf").value = cpf
+
+        })
+        
+    }
+    
+    function excluiTitular(matricula){
+        var r = confirm('Deseja excluir o titular?');
+        if (r == true){
+            fetch(`/titulares/excluir/`+matricula+`/`, {
+                method: 'DELETE',
+            })
+            .then(res=> {
+                if (res.ok){
+                    toastr['success']('Titular excluído com sucesso');
+                    criaTabela();
+                } else {
+                    toastr['error']('Titular não excluído')
+                }
+            })
+            .catch(err => toastr['error'](err))
+        }
+    }
+</script>
