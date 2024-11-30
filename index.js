@@ -22,7 +22,7 @@ const db = mysql.createConnection({
     user: "root",
     password: "",
     port: '3306',
-    database: "cadastro",
+    database: "sistema_cadastro",
   });
 
 //Iniciando o servidor http
@@ -32,7 +32,7 @@ app.listen(port, () => {
 
 //Criando rotas
 app.get('/titulares/lista', (req, res) => {
-    const sql = "SELECT matricula, nome, DATE_FORMAT(data_nascimento, '%d/%m/%Y') as data_nascimento, cpf FROM titulares ORDER BY nome";
+    const sql = "SELECT matricula, nome_titular, DATE_FORMAT(data_nascimento, '%d/%m/%Y') as data_nascimento, cpf FROM titulares ORDER BY nome_titular";
     db.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -59,13 +59,54 @@ app.post('/titulares/inserir', (req, res) => {
     })
 })
 
-app.get('titulares/lista', (req, res) => {
-    sql = "SELECT matricula, nome_titular, DATE_FORMAT(data_nascimento, '%d/%m/%Y') as data_nascimento, cpf FROM titulares ORDER BY nome_titular"
-    db.query(sql, (err,result) => {
-        if (err){
+app.post('/titulares/inserir', (req,res) => {
+    const { matricula, nomeTitular, dataNascimento, cpf } = req.body
+    var sql = `INSERT INTO titulares VALUES ("${matricula}", "${nomeTitular}", "${dataNascimento}", "${cpf}")`
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
             res.send(false)
         } else {
-            res.send(JSON.stringify(result))
+            res.send(true)
+        }
+    })
+
+})
+
+app.get('/titulares/consulta/:matricula/', (req, res) => {
+    const vMatricula = req.params.matricula;
+    var sql = `SELECT matricula, nome_titular, DATE_FORMAT(data_nascimento, '%Y-%m-%d') AS data_nascimento, cpf FROM titulares WHERE matricula=${vMatricula}`
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.send(err);
+        } else {
+            res.json({titular: result})
+        }
+    })
+})
+
+app.put('/titulares/alterar/:matricula/', (req,res) => {
+    const {nomeTitular, dataNascimento, cpf } = req.body;
+    const matricula = req.params.matricula;
+    var sql = `UPDATE titulares SET nome_titular = "${nomeTitular}", data_nascimento = "${dataNascimento}", cpf="${cpf}" WHERE matricula = "${matricula}"`;
+    db.query(sql, (err, result)=>{
+       if (err) {
+            console.log(err)
+            res.send(false)
+       }
+       res.send(true)
+    })
+})
+
+app.delete('/titulares/excluir/:matricula/', (req,res) => {
+    const matricula = req.params.matricula;
+    var sql = `DELETE FROM titulares WHERE matricula = ${matricula}`
+    db.query(sql, (err, result) => {
+        if (err){ 
+            res.send(false)
+        } else {
+            res.send(true)
         }
     })
 })
