@@ -137,48 +137,51 @@
 <!-- Contraste -->
 <script src="/js/contraste.js" crossorigin="anonymous"></script>
 <script>
-    
-    mostraTabela();
-	//Envia o form
+    // Alimenta a tabela
+    criaTabela();
+
+    // Envia o form
     const form = document.getElementById("formDados");
     form.addEventListener('submit', event => {
         event.preventDefault();
         const formData = new FormData(form);
         const data = new URLSearchParams(formData);
-        const element = document.getElementById("btnInserir")
+        const element = document.getElementById("btnInserir");
         if (element.innerText == "Inserir"){
-            fetch('/titulares/inserir', {
+            fetch('/titulares/inserir/', {
                 method: 'POST',
                 body: data,
             })
             .then(res => {
                 if (res.ok){
-                    toastr["success"]("Titular inserido com sucesso");
-                    $("#modalForm").modal('hide');
-                    document.getElementById("formDados").reset;
-                    mostraTabela();
+                    criaTabela();
+                    toastr['success']('Titular Inserido com Sucesso');
+                    form.reset();
+                    $("#modalForm").modal('toggle');
+                    
+
                 }
             })
-            .catch(error => toast["error"](error))
-        } 
-        if (element.innerText == 'Alterar'){
-            fetch('/titulares/alterar/'+document.getElementById("matricula").value+"/", {
+            .catch(err => toast["error"](err))
+        }
+        if (element.innerText == "Alterar"){
+            fetch('/titulares/alterar/'+document.getElementById("matricula").value+'/', {
                 method: 'PUT',
                 body: data,
             })
             .then(res => {
                 if (res.ok){
-                    toastr["success"]("Titular Alterado com sucesso");
-                    $("#modalForm").modal('hide');
-                    mostraTabela();
+                    toastr['success']('Titular Alterado com Sucesso', 'Sistema de Cadastro');
+                    form.reset;
+                    $("#modalForm").modal('toggle');
+                    criaTabela();
                 }
             })
-            .catch(error => toast["error"](error))
-
+            .catch(err => toastr["error"](err))
         }
-    })
 
-    function mostraTabela(){
+    })
+    function criaTabela(){
         fetch("/titulares/lista")
         .then(res=>res.json())
         .then(dados=>{
@@ -191,8 +194,8 @@
                     linha += "<td>"+dados.titulares[i].nome_titular+"</td>";
                     linha += "<td>"+dados.titulares[i].data_nascimento+"</td>";
                     linha += "<td>"+dados.titulares[i].cpf+"</td>";
-                    linha += "<td><i class='bi bi-pencil-fill' onclick='editaTitular("+dados.titulares[i].matricula+")' data-toggle='modal' data-target='#modalForm'></i><i class='bi bi-trash-fill ml-3' onclick='excluiTitular("+dados.titulares[i].matricula+")'></i></td>"
-                    linha += "</tr>";
+                    linha += "<td><i class='bi bi-pencil-fill' onclick='editaTitular("+dados.titulares[i].matricula+")' data-toggle='modal' data-target='#modalForm'></i><i class='bi bi-trash-fill ml-2' onclick='excluiTitular("+dados.titulares[i].matricula+")'></i>"
+                    linha += "</tr>"
                 }
                 document.getElementById("corpoTabela").innerHTML = linha;
             } else {
@@ -203,41 +206,41 @@
     }
 
     function editaTitular(matricula){
-        const cMatricula = matricula;
-
-        //Tratar o form
+        const vMatricula = matricula
+        // Tratar o form
         element = document.getElementById("btnInserir");
         element.innerText = "Alterar";
         document.getElementById("matricula").disabled = true;
 
-        // Preencher o formulário
-        fetch('/titulares/consulta/'+cMatricula+'/')
+        //Preenche o form
+        fetch('/titulares/consulta/'+vMatricula+'/')
         .then(res=>res.json())
-        .then(dados=> {
-            const nome = dados.titular[0].nome_titular;
-            const data_nascimento = dados.titular[0].data_nascimento;
-            const cpf = dados.titular[0].cpf;
-            document.getElementById("matricula").value = cMatricula;
-            document.getElementById("nomeTitular").value = nome;
-            document.getElementById("dataNascimento").value = data_nascimento;
-            document.getElementById("cpf").value = cpf;
+        .then(dados=>{
+            const matricula = dados.titular[0].matricula
+            const nome = dados.titular[0].nome_titular
+            const data_nascimento = dados.titular[0].data_nascimento
+            const cpf = dados.titular[0].cpf
+            document.getElementById("matricula").value = matricula
+            document.getElementById("nomeTitular").value = nome
+            document.getElementById("dataNascimento").value = data_nascimento
+            document.getElementById("cpf").value = cpf
+
         })
-
+        
     }
-
+    
     function excluiTitular(matricula){
-        const cMatricula = matricula;
-        var resp = confirm("Deseja excluir o titular?");
-        if (resp == true){
-            fetch(`/titulares/excluir/`+cMatricula+`/`, {
+        var r = confirm('Deseja excluir o titular?');
+        if (r == true){
+            fetch(`/titulares/excluir/`+matricula+`/`, {
                 method: 'DELETE',
-            }) 
+            })
             .then(res=> {
                 if (res.ok){
                     toastr['success']('Titular excluído com sucesso');
-                    mostraTabela();
+                    criaTabela();
                 } else {
-                    toastr['error']('Erro na exclusão do titular');
+                    toastr['error']('Titular não excluído')
                 }
             })
             .catch(err => toastr['error'](err))
